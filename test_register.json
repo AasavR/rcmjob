@@ -1,0 +1,10 @@
+{
+  "name": "Test User2",
+  "email": "test2@example.com",
+  "phone": "+1234567891",
+  "password": "password123",
+  "role": "candidate",
+  "dob": "1990-01-01",
+  "experience": "2 years",
+  "workflowPreference": "fun_learning_growth"
+}
