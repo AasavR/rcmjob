@@ -31,7 +31,7 @@ const Register = () => {
     setSuccess('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', formData);
+      await axios.post('http://localhost:5000/api/auth/register', formData);
       setSuccess('Registration successful! You earned 10 coins. Please verify OTP sent to your phone.');
       setRequiresOtp(true);
     } catch (error) {
