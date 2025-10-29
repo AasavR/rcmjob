@@ -40,7 +40,7 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, formData);
       if (response.data.requiresOtp) {
         setRequiresOtp(true);
         setError('');
@@ -72,7 +72,7 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { ...formData, otp });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, { ...formData, otp });
       const { token, user } = response.data;
 
       localStorage.setItem('token', token);

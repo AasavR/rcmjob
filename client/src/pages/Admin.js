@@ -17,7 +17,7 @@ const Admin = () => {
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/admin/stats', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setStats(response.data);
@@ -31,7 +31,7 @@ const Admin = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/admin/users', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setUsers(response.data);
@@ -43,7 +43,7 @@ const Admin = () => {
   const fetchResumes = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/admin/resumes', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/resumes`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setResumes(response.data);
@@ -55,7 +55,7 @@ const Admin = () => {
   const fetchJobs = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/admin/jobs', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/jobs`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setJobs(response.data);

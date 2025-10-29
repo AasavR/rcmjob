@@ -31,7 +31,7 @@ const Register = () => {
     setSuccess('');
 
     try {
-      await axios.post('http://localhost:5000/api/auth/register', formData);
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, formData);
       setSuccess('Registration successful! You earned 10 coins. Please verify OTP sent to your phone.');
       setRequiresOtp(true);
     } catch (error) {
@@ -47,7 +47,7 @@ const Register = () => {
     setError('');
 
     try {
-      await axios.post('http://localhost:5000/api/auth/verify-otp', { phone: formData.phone, otp });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/verify-otp`, { phone: formData.phone, otp });
       setSuccess('OTP verified! You can now login.');
       setTimeout(() => navigate('/login'), 2000);
     } catch (error) {
