@@ -19,7 +19,15 @@ const paymentRoutes = require('./routes/payments');
 dotenv.config();
 
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow only your Netlify domain (replace with your actual Netlify URL)
+const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000'; // Default to localhost for development
+
+app.use(cors({
+  origin: allowedOrigin,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
