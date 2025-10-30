@@ -27,7 +27,7 @@ router.post('/register', async (req, res) => {
   }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, phone, password: hashedPassword, role, dob, experience, workflowPreference, coins: 0 });
+    const user = new User({ username, name, email, phone, password: hashedPassword, role, dob, experience, workflowPreference, coins: 0 });
     await user.save();
 
     // Award coins for registration
