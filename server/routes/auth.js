@@ -33,10 +33,6 @@ router.post('/register', async (req, res) => {
       userData.username = username;
     }
     const user = new User(userData);
-    console.log('Saving user:', user);
-    console.log('User data before save:', userData);
-    console.log('User schema paths:', User.schema.paths);
-    console.log('User schema required paths:', Object.keys(User.schema.paths).filter(path => User.schema.paths[path].isRequired));
     await user.save();
 
     // Award coins for registration
