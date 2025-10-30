@@ -20,11 +20,15 @@ dotenv.config();
 
 const app = express();
 
-// Configure CORS to allow only your Netlify domain (replace with your actual Netlify URL)
-const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000'; // Default to localhost for development
+// Configure CORS to allow your Netlify domain and localhost for development
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://rcmjob.com', // Replace with your actual Netlify URL if different
+  process.env.FRONTEND_URL
+].filter(Boolean); // Filter out undefined values
 
 app.use(cors({
-  origin: allowedOrigin,
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
