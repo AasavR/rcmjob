@@ -45,6 +45,7 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ message: 'User registered successfully. Please verify OTP.' });
   } catch (error) {
+    console.error('Registration error:', error);
     res.status(400).json({ error: error.message });
   }
 });
