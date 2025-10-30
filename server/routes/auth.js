@@ -22,21 +22,16 @@ const transporter = nodemailer.createTransport({
 // Register
 router.post('/register', async (req, res) => {
   const { username, name, email, phone, password, role, dob, experience, workflowPreference } = req.body;
-  console.log('Received data:', { username, name, email, phone, password, role, dob, experience, workflowPreference });
   if (!name) {
     return res.status(400).json({ error: 'name is required' });
   }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const userData = { name, email, phone, password: hashedPassword, role, dob, experience, workflowPreference, coins: 0 };
+    const userData = { name, email, phone, password: hashedPassword, role, dob, experience, workflowPreference, coins: 10 };
     if (username) {
       userData.username = username;
     }
     const user = new User(userData);
-    await user.save();
-
-    // Award coins for registration
-    user.coins += 10; // Registration bonus
     await user.save();
 
     // Send OTP after registration
