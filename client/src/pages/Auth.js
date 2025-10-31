@@ -131,7 +131,7 @@ const Auth = () => {
 
     try {
       await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, registerData);
-      setSuccess('Registration successful! You earned 10 coins. Please verify OTP sent to your phone.');
+      setSuccess('Registration successful! You earned 10 coins. Please verify OTP sent to your email.');
       setRegisterRequiresOtp(true);
     } catch (error) {
       setError(error.response?.data?.error || 'Registration failed');
@@ -146,7 +146,7 @@ const Auth = () => {
     setError('');
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/verify-otp`, { phone: registerData.phone, otp: registerOtp });
+      await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/verify-otp`, { email: registerData.email, otp: registerOtp });
       setSuccess('OTP verified! You can now login.');
       setTimeout(() => setMode('login'), 2000);
     } catch (error) {

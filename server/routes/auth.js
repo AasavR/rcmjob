@@ -43,16 +43,18 @@ router.post('/register', async (req, res) => {
     const user = new User(userData);
     await user.save();
 
-    // Send OTP after registration
+    // Send OTP after registration via email
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    await User.findOneAndUpdate({ phone }, { otp, otpExpires: Date.now() + 10 * 60 * 1000 });
-    await twilioClient.messages.create({
-      body: `Your OTP for RCM Jobs registration is ${otp}`,
-      from: process.env.TWILIO_PHONE,
-      to: phone,
-    });
+    await User.findOneAndUpdate({ email }, { otp, otpExpires: Date.now() + 10 * 60 * 1000 });
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Your OTP for RCM Jobs registration',
+      text: `Your OTP is ${otp}`
+    };
+    await transporter.sendMail(mailOptions);
 
-    res.status(201).json({ message: 'User registered successfully. Please verify OTP.' });
+    res.status(201).json({ message: 'User registered successfully. Please verify OTP sent to your email.' });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(400).json({ error: error.message });
@@ -69,15 +71,17 @@ router.post('/login', async (req, res) => {
     }
     if (!user.isVerified) {
       if (!otp) {
-        // Send OTP if not verified and no OTP provided
+        // Send OTP if not verified and no OTP provided via email
         const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
         await User.findOneAndUpdate({ email }, { otp: newOtp, otpExpires: Date.now() + 10 * 60 * 1000 });
-        await twilioClient.messages.create({
-          body: `Your OTP for RCM Jobs login is ${newOtp}`,
-          from: process.env.TWILIO_PHONE,
-          to: user.phone,
-        });
-        return res.status(200).json({ message: 'OTP sent to your phone. Please verify to login.', requiresOtp: true });
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: email,
+          subject: 'Your OTP for RCM Jobs login',
+          text: `Your OTP is ${newOtp}`
+        };
+        await transporter.sendMail(mailOptions);
+        return res.status(200).json({ message: 'OTP sent to your email. Please verify to login.', requiresOtp: true });
       } else {
         // Verify OTP
         if (user.otp !== otp || user.otpExpires < Date.now()) {
@@ -115,9 +119,9 @@ router.post('/send-otp', async (req, res) => {
 
 // Verify OTP
 router.post('/verify-otp', async (req, res) => {
-  const { phone, otp } = req.body;
+  const { email, otp } = req.body;
   try {
-    const user = await User.findOne({ phone, otp, otpExpires: { $gt: Date.now() } });
+    const user = await User.findOne({ email, otp, otpExpires: { $gt: Date.now() } });
     if (!user) return res.status(400).json({ error: 'Invalid OTP' });
     user.isVerified = true;
     user.otp = undefined;
