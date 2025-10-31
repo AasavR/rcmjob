@@ -22,8 +22,17 @@ const transporter = nodemailer.createTransport({
 // Register
 router.post('/register', async (req, res) => {
   const { username, name, email, phone, password, role, dob, experience, workflowPreference } = req.body;
-  if (!name || !email || !phone || !password) {
-    return res.status(400).json({ error: 'name, email, phone, and password are required' });
+  if (!name) {
+    return res.status(400).json({ error: 'name is required' });
+  }
+  if (!email) {
+    return res.status(400).json({ error: 'email is required' });
+  }
+  if (!phone) {
+    return res.status(400).json({ error: 'phone is required' });
+  }
+  if (!password) {
+    return res.status(400).json({ error: 'password is required' });
   }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
