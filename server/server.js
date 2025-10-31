@@ -37,25 +37,22 @@ app.use(express.urlencoded({ extended: true }));
 
 async function connectDB() {
   try {
-    // Try to connect to local MongoDB first
-    const localUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/rcmjob';
-    await mongoose.connect(localUri);
-    console.log('Connected to local MongoDB');
-  } catch (localError) {
-    console.error('Error connecting to local MongoDB:', localError.message);
-    console.log('Starting with in-memory MongoDB for testing...');
-    try {
-      const { MongoMemoryServer } = require('mongodb-memory-server');
-      const mongoServer = await MongoMemoryServer.create();
-      const mongoUri = mongoServer.getUri();
-      await mongoose.connect(mongoUri);
-      console.log('Connected to in-memory MongoDB for testing');
-    } catch (memoryError) {
-      console.error('Error connecting to in-memory MongoDB:', memoryError.message);
-      console.log('Please ensure MongoDB is installed and running locally, or check your MONGODB_URI environment variable.');
-      console.log('For development, you can install MongoDB Community Server or use MongoDB Atlas.');
+    const mongoUri = process.env.MONGO_URI; // Use Atlas URI
+
+    if (!mongoUri) {
+      console.error("❌ MONGO_URI is not set. Add it in Render Environment Variables.");
       process.exit(1);
     }
+
+    await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+
+    console.log("✅ Connected to MongoDB Atlas");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err.message);
+    process.exit(1);
   }
 }
 
