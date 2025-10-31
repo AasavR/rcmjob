@@ -37,10 +37,10 @@ app.use(express.urlencoded({ extended: true }));
 
 async function connectDB() {
   try {
-    const mongoUri = process.env.MONGO_URI; // Use Atlas URI
+    const mongoUri = process.env.MONGODB_URI; // Use Atlas URI
 
     if (!mongoUri) {
-      console.error("❌ MONGO_URI is not set. Add it in Render Environment Variables.");
+      console.error("❌ MONGODB_URI is not set. Add it in Render Environment Variables.");
       process.exit(1);
     }
 
