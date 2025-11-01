@@ -52,7 +52,14 @@ router.post('/register', async (req, res) => {
       subject: 'Your OTP for RCM Jobs registration',
       text: `Your OTP is ${otp}`
     };
-    await transporter.sendMail(mailOptions);
+    const sendMailPromise = transporter.sendMail(mailOptions);
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Email send timeout')), 10000));
+    try {
+      await Promise.race([sendMailPromise, timeoutPromise]);
+    } catch (emailError) {
+      console.error('Email send error:', emailError);
+      return res.status(500).json({ error: 'Failed to send OTP email. Please try again.' });
+    }
 
     res.status(201).json({ message: 'User registered successfully. Please verify OTP sent to your email.' });
   } catch (error) {
@@ -80,7 +87,14 @@ router.post('/login', async (req, res) => {
           subject: 'Your OTP for RCM Jobs login',
           text: `Your OTP is ${newOtp}`
         };
-        await transporter.sendMail(mailOptions);
+        const sendMailPromise = transporter.sendMail(mailOptions);
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Email send timeout')), 10000));
+        try {
+          await Promise.race([sendMailPromise, timeoutPromise]);
+        } catch (emailError) {
+          console.error('Email send error:', emailError);
+          return res.status(500).json({ error: 'Failed to send OTP email. Please try again.' });
+        }
         return res.status(200).json({ message: 'OTP sent to your email. Please verify to login.', requiresOtp: true });
       } else {
         // Verify OTP
