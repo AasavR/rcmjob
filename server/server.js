@@ -15,7 +15,7 @@ const learningRoutes = require('./routes/learning');
 const wheelRoutes = require('./routes/wheel');
 const adminRoutes = require('./routes/admin');
 const paymentRoutes = require('./routes/payments');
-const otpRoutes = require('./routes/otp');
+const otpRoutes = require('./routes/otp_secure');
 
 dotenv.config();
 
