@@ -38,7 +38,16 @@ router.post("/send", async (req, res) => {
     };
 
     try {
+        console.log('Attempting to send OTP email to:', email);
+        console.log('SMTP Config:', {
+            host: process.env.SMTP_HOST,
+            port: parseInt(process.env.SMTP_PORT),
+            secure: process.env.SMTP_SECURE === 'true',
+            user: process.env.SMTP_USER ? '***configured***' : 'NOT SET'
+        });
+
         await transporter.sendMail(mailOptions);
+        console.log('OTP email sent successfully to:', email);
 
         // Store hashed OTP in DB
         await User.findOneAndUpdate(
@@ -49,7 +58,13 @@ router.post("/send", async (req, res) => {
 
         res.json({ success: true, message: "OTP sent to your email" });
     } catch (err) {
-        console.error(err);
+        console.error('SMTP Error Details:', {
+            code: err.code,
+            command: err.command,
+            message: err.message,
+            errno: err.errno,
+            syscall: err.syscall
+        });
         res.status(500).json({ success: false, error: "Failed to send OTP" });
     }
 });
