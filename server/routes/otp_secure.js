@@ -16,7 +16,7 @@ router.post("/send", async (req, res) => {
 
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
+        port: parseInt(process.env.SMTP_PORT),
         secure: process.env.SMTP_SECURE === 'true',
         auth: {
             user: process.env.SMTP_USER,
@@ -24,7 +24,10 @@ router.post("/send", async (req, res) => {
         },
         tls: {
             rejectUnauthorized: false
-        }
+        },
+        connectionTimeout: 10000, // 10 seconds
+        greetingTimeout: 10000,   // 10 seconds
+        socketTimeout: 10000,     // 10 seconds
     });
 
     const mailOptions = {
