@@ -54,10 +54,8 @@ router.post('/register', async (req, res) => {
       subject: 'Your OTP for RCM Jobs registration',
       text: `Your OTP is ${otp}`
     };
-    const sendMailPromise = transporter.sendMail(mailOptions);
-    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Email send timeout')), 10000));
     try {
-      await Promise.race([sendMailPromise, timeoutPromise]);
+      await transporter.sendMail(mailOptions);
     } catch (emailError) {
       console.error('Email send error:', emailError);
       return res.status(500).json({ error: 'Failed to send OTP email. Please try again.' });
@@ -89,10 +87,8 @@ router.post('/login', async (req, res) => {
           subject: 'Your OTP for RCM Jobs login',
           text: `Your OTP is ${newOtp}`
         };
-        const sendMailPromise = transporter.sendMail(mailOptions);
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Email send timeout')), 10000));
         try {
-          await Promise.race([sendMailPromise, timeoutPromise]);
+          await transporter.sendMail(mailOptions);
         } catch (emailError) {
           console.error('Email send error:', emailError);
           return res.status(500).json({ error: 'Failed to send OTP email. Please try again.' });
