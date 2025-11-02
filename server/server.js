@@ -15,6 +15,7 @@ const learningRoutes = require('./routes/learning');
 const wheelRoutes = require('./routes/wheel');
 const adminRoutes = require('./routes/admin');
 const paymentRoutes = require('./routes/payments');
+const otpRoutes = require('./routes/otp');
 
 dotenv.config();
 
@@ -70,6 +71,7 @@ app.use('/api/learning', learningRoutes);
 app.use('/api/wheel', wheelRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/otp', otpRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

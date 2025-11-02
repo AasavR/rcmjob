@@ -12,13 +12,14 @@ const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKE
 
 // Email transporter (using Zoho)
 const transporter = nodemailer.createTransport({
-  host: 'smtp.zoho.com',
-  port: 465,
-  secure: true, // true for 465, false for other ports
+  host: process.env.SMTP_HOST || 'smtp.zoho.com',
+  port: process.env.SMTP_PORT || 465,
+  secure: process.env.SMTP_SECURE === 'true',
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
+  tls: { rejectUnauthorized: false },
 });
 
 // Register
@@ -49,7 +50,7 @@ router.post('/register', async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await User.findOneAndUpdate({ email }, { otp, otpExpires: Date.now() + 10 * 60 * 1000 });
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `${process.env.SMTP_USER}`,
       to: email,
       subject: 'Your OTP for RCM Jobs registration',
       text: `Your OTP is ${otp}`
@@ -82,7 +83,7 @@ router.post('/login', async (req, res) => {
         const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
         await User.findOneAndUpdate({ email }, { otp: newOtp, otpExpires: Date.now() + 10 * 60 * 1000 });
         const mailOptions = {
-          from: process.env.EMAIL_USER,
+          from: `${process.env.SMTP_USER}`,
           to: email,
           subject: 'Your OTP for RCM Jobs login',
           text: `Your OTP is ${newOtp}`
