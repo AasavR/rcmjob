@@ -13,22 +13,30 @@ const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKE
 // Email transporter (using Zoho)
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.zoho.com',
-  port: parseInt(process.env.SMTP_PORT) || 587, // Try STARTTLS port instead of SSL
-  secure: false, // false for STARTTLS (port 587)
-  requireTLS: true, // Force TLS upgrade
+  port: parseInt(process.env.SMTP_PORT) || 587,
+  secure: false,
+  requireTLS: true,
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
   tls: {
     rejectUnauthorized: false,
-    ciphers: 'HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'
+    minVersion: 'TLSv1.2',
+    maxVersion: 'TLSv1.3',
+    ciphers: 'ECDHE-RSA-AES128-GCM-SHA256:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'
   },
-  connectionTimeout: 60000, // 60 seconds
-  greetingTimeout: 30000,   // 30 seconds
-  socketTimeout: 60000,     // 60 seconds
-  debug: true, // Enable debug logging
-  logger: true  // Enable logger
+  pool: true, // Use connection pooling
+  maxConnections: 1,
+  maxMessages: 10,
+  rateDelta: 1000,
+  rateLimit: 5,
+  connectionTimeout: 30000,
+  greetingTimeout: 15000,
+  socketTimeout: 30000,
+  dnsTimeout: 10000,
+  debug: true,
+  logger: true
 });
 
 // Register
