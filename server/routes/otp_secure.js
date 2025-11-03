@@ -34,10 +34,10 @@ router.post("/send", async (req, res) => {
         maxMessages: 10,
         rateDelta: 1000,
         rateLimit: 5,
-        connectionTimeout: 60000,
-        greetingTimeout: 30000,
-        socketTimeout: 60000,
-        dnsTimeout: 15000,
+        connectionTimeout: 120000,
+        greetingTimeout: 60000,
+        socketTimeout: 120000,
+        dnsTimeout: 30000,
         debug: true,
         logger: true
     });
