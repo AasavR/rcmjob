@@ -16,6 +16,7 @@ import Learning from './pages/Learning';
 import Wheel from './pages/Wheel';
 import Admin from './pages/Admin';
 import Payment from './pages/Payment';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import './App.css';
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
           <Route path="/scorecard" element={<Scorecard />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           {getWorkflowRoutes()}
         </Routes>
       </div>
