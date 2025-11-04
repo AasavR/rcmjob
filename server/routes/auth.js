@@ -13,9 +13,8 @@ const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKE
 // Email transporter (using Zoho)
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.zoho.com',
-  port: parseInt(process.env.SMTP_PORT) || 587,
-  secure: false, // Use STARTTLS
-  requireTLS: true,
+  port: parseInt(process.env.SMTP_PORT) || 465, // SSL port
+  secure: true, // Use SSL
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
