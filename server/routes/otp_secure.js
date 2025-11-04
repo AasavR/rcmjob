@@ -15,16 +15,31 @@ router.post("/send", async (req, res) => {
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     const transporter = nodemailer.createTransport({
-        service: 'gmail', // Try Gmail SMTP instead of Zoho
+        host: process.env.SMTP_HOST || 'smtp.zoho.com',
+        port: parseInt(process.env.SMTP_PORT) || 587,
+        secure: false,
+        requireTLS: true,
         auth: {
             user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
+            pass: process.env.SMTP_PASS,
         },
-        // Minimal configuration for reliability
-        secure: true,
         tls: {
-            rejectUnauthorized: false
-        }
+            rejectUnauthorized: false,
+            minVersion: 'TLSv1.2',
+            maxVersion: 'TLSv1.3',
+            ciphers: 'ECDHE-RSA-AES128-GCM-SHA256:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'
+        },
+        pool: true, // Use connection pooling
+        maxConnections: 1,
+        maxMessages: 10,
+        rateDelta: 1000,
+        rateLimit: 5,
+        connectionTimeout: 30000,
+        greetingTimeout: 15000,
+        socketTimeout: 30000,
+        dnsTimeout: 10000,
+        debug: true,
+        logger: true
     });
 
     const mailOptions = {
