@@ -16,9 +16,9 @@ router.post("/send", async (req, res) => {
 
     const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.zoho.com',
-        port: parseInt(process.env.SMTP_PORT) || 465,
-        secure: true,
-        requireTLS: false,
+        port: parseInt(process.env.SMTP_PORT) || 587,
+        secure: false, // Use STARTTLS
+        requireTLS: true,
         auth: {
             user: process.env.SMTP_USER,
             pass: process.env.SMTP_PASS,
@@ -34,9 +34,9 @@ router.post("/send", async (req, res) => {
         maxMessages: 10,
         rateDelta: 1000,
         rateLimit: 5,
-        connectionTimeout: 30000,
-        greetingTimeout: 15000,
-        socketTimeout: 30000,
+        connectionTimeout: 60000, // Increased timeout
+        greetingTimeout: 30000,
+        socketTimeout: 60000,
         dnsTimeout: 10000,
         debug: true,
         logger: true

@@ -14,7 +14,7 @@ const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKE
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST || 'smtp.zoho.com',
   port: parseInt(process.env.SMTP_PORT) || 587,
-  secure: false,
+  secure: false, // Use STARTTLS
   requireTLS: true,
   auth: {
     user: process.env.SMTP_USER,
@@ -31,9 +31,9 @@ const transporter = nodemailer.createTransport({
   maxMessages: 10,
   rateDelta: 1000,
   rateLimit: 5,
-  connectionTimeout: 30000,
-  greetingTimeout: 15000,
-  socketTimeout: 30000,
+  connectionTimeout: 60000, // Increased timeout
+  greetingTimeout: 30000,
+  socketTimeout: 60000,
   dnsTimeout: 10000,
   debug: true,
   logger: true
