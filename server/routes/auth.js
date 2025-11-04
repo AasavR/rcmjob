@@ -22,19 +22,11 @@ const transporter = nodemailer.createTransport({
   },
   tls: {
     rejectUnauthorized: false,
-    minVersion: 'TLSv1.2',
-    maxVersion: 'TLSv1.3',
-    ciphers: 'ECDHE-RSA-AES128-GCM-SHA256:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA'
   },
-  pool: true, // Use connection pooling
-  maxConnections: 1,
-  maxMessages: 10,
-  rateDelta: 1000,
-  rateLimit: 5,
-  connectionTimeout: 60000, // Increased timeout
-  greetingTimeout: 30000,
-  socketTimeout: 60000,
-  dnsTimeout: 10000,
+  connectionTimeout: 120000, // Increased to 2 minutes
+  greetingTimeout: 60000,
+  socketTimeout: 120000,
+  dnsTimeout: 30000,
   debug: true,
   logger: true
 });
