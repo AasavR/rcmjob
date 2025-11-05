@@ -15,13 +15,12 @@ router.post("/send", async (req, res) => {
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.SMTP_PORT) || 587, // STARTTLS port
-        secure: false, // Use STARTTLS
-        requireTLS: true,
+        host: process.env.SMTP_HOST || 'smtp.zoho.com',
+        port: parseInt(process.env.SMTP_PORT) || 465, // SSL port
+        secure: true, // Use SSL
         auth: {
-            user: process.env.SMTP_USER || 'rcmjob2@gmail.com',
-            pass: process.env.SMTP_PASS || 'qiea juae woha ozks',
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
         },
         tls: {
             rejectUnauthorized: false,
