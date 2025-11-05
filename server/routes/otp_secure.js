@@ -1,8 +1,12 @@
 const express = require("express");
 const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail');
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const router = express.Router();
+
+// SendGrid setup
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 router.post("/send", async (req, res) => {
     const { email } = req.body;
@@ -15,12 +19,12 @@ router.post("/send", async (req, res) => {
     const hashedOtp = await bcrypt.hash(otp, 10);
 
     const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.zoho.com',
-        port: parseInt(process.env.SMTP_PORT) || 465, // SSL port
-        secure: true, // Use SSL
+        host: 'smtp.sendgrid.net',
+        port: 587, // STARTTLS port
+        secure: false, // Use STARTTLS
         auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS,
+            user: 'apikey',
+            pass: process.env.SENDGRID_API_KEY,
         },
         tls: {
             rejectUnauthorized: false,
@@ -34,7 +38,7 @@ router.post("/send", async (req, res) => {
     });
 
     const mailOptions = {
-        from: `RCMJob <${process.env.SMTP_USER}>`,
+        from: 'hello@rcmjob.com',
         to: email,
         subject: "Your OTP",
         text: `Your OTP is ${otp}`

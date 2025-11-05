@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
+const sgMail = require('@sendgrid/mail');
 const User = require('../models/User');
 
 const router = express.Router();
@@ -10,14 +11,17 @@ const router = express.Router();
 // Twilio setup (replace with your credentials)
 const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 
-// Email transporter (using Zoho)
+// SendGrid setup
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Email transporter (using SendGrid SMTP)
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || 'smtp.zoho.com',
-  port: parseInt(process.env.SMTP_PORT) || 465, // SSL port
-  secure: true, // Use SSL
+  host: 'smtp.sendgrid.net',
+  port: 587, // STARTTLS port
+  secure: false, // Use STARTTLS
   auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
+    user: 'apikey',
+    pass: process.env.SENDGRID_API_KEY,
   },
   tls: {
     rejectUnauthorized: false,
@@ -58,7 +62,7 @@ router.post('/register', async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     await User.findOneAndUpdate({ email }, { otp, otpExpires: Date.now() + 10 * 60 * 1000 });
     const mailOptions = {
-      from: `${process.env.SMTP_USER}`,
+      from: 'hello@rcmjob.com',
       to: email,
       subject: 'Your OTP for RCM Jobs registration',
       text: `Your OTP is ${otp}`
@@ -91,7 +95,7 @@ router.post('/login', async (req, res) => {
         const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
         await User.findOneAndUpdate({ email }, { otp: newOtp, otpExpires: Date.now() + 10 * 60 * 1000 });
         const mailOptions = {
-          from: `${process.env.SMTP_USER}`,
+          from: 'hello@rcmjob.com',
           to: email,
           subject: 'Your OTP for RCM Jobs login',
           text: `Your OTP is ${newOtp}`
