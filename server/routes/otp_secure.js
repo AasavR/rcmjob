@@ -18,42 +18,16 @@ router.post("/send", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const hashedOtp = await bcrypt.hash(otp, 10);
 
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.sendgrid.net',
-        port: 587, // STARTTLS port
-        secure: false, // Use STARTTLS
-        auth: {
-            user: 'apikey',
-            pass: process.env.SENDGRID_API_KEY,
-        },
-        tls: {
-            rejectUnauthorized: false,
-        },
-        connectionTimeout: 120000, // Increased to 2 minutes
-        greetingTimeout: 60000,
-        socketTimeout: 120000,
-        dnsTimeout: 30000,
-        debug: true,
-        logger: true
-    });
-
-    const mailOptions = {
-        from: 'hello@rcmjob.com',
-        to: email,
-        subject: "Your OTP",
-        text: `Your OTP is ${otp}`
-    };
-
     try {
         console.log('Attempting to send OTP email to:', email);
-        console.log('SMTP Config:', {
-            host: process.env.SMTP_HOST,
-            port: parseInt(process.env.SMTP_PORT),
-            secure: process.env.SMTP_SECURE === 'true',
-            user: process.env.SMTP_USER ? '***configured***' : 'NOT SET'
+
+        await sgMail.send({
+            to: email,
+            from: 'hello@rcmjob.com',
+            subject: 'Your OTP',
+            text: `Your OTP is ${otp}`
         });
 
-        await transporter.sendMail(mailOptions);
         console.log('OTP email sent successfully to:', email);
 
         // Store hashed OTP in DB
@@ -65,13 +39,7 @@ router.post("/send", async (req, res) => {
 
         res.json({ success: true, message: "OTP sent to your email" });
     } catch (err) {
-        console.error('SMTP Error Details:', {
-            code: err.code,
-            command: err.command,
-            message: err.message,
-            errno: err.errno,
-            syscall: err.syscall
-        });
+        console.error('SendGrid Error Details:', err);
         res.status(500).json({ success: false, error: "Failed to send OTP" });
     }
 });
