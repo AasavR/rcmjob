@@ -1,37 +1,34 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
+const sgMail = require('@sendgrid/mail');
 const router = express.Router();
+
+// SendGrid setup
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 router.post("/send", async (req, res) => {
     const { email } = req.body;
 
-    const otp = Math.floor(100000 + Math.random() * 900000);
-
-const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: process.env.SMTP_PORT,
-    secure: process.env.SMTP_SECURE === 'true',
-    auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
+    if (!email) {
+        return res.status(400).json({ success: false, error: "Email is required" });
     }
-});
 
-    const mailOptions = {
-        from: `RCMJob <${process.env.SMTP_USER}>`,
-        to: email,
-        subject: "Your OTP",
-        text: `Your OTP is ${otp}`
-    };
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     try {
-        await transporter.sendMail(mailOptions);
-        res.json({ success: true, otp });
+        console.log('Attempting to send OTP email to:', email);
+
+        await sgMail.send({
+            to: email,
+            from: 'hello@rcmjob.com',
+            subject: 'Your OTP',
+            text: `Your OTP is ${otp}`
+        });
+
+        console.log('OTP email sent successfully to:', email);
+
+        res.json({ success: true, message: "OTP sent to your email", otp });
     } catch (err) {
-        console.error(err);
+        console.error('SendGrid Error Details:', err);
         res.status(500).json({ success: false, error: "Failed to send OTP" });
     }
 });

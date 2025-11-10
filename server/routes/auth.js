@@ -14,25 +14,7 @@ const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKE
 // SendGrid setup
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Email transporter (using SendGrid SMTP)
-const transporter = nodemailer.createTransport({
-  host: 'smtp.sendgrid.net',
-  port: 587, // STARTTLS port
-  secure: false, // Use STARTTLS
-  auth: {
-    user: 'apikey',
-    pass: process.env.SENDGRID_API_KEY,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  connectionTimeout: 120000, // Increased to 2 minutes
-  greetingTimeout: 60000,
-  socketTimeout: 120000,
-  dnsTimeout: 30000,
-  debug: true,
-  logger: true
-});
+// SendGrid API will be used instead of SMTP transporter
 
 // Register
 router.post('/register', async (req, res) => {
@@ -68,7 +50,12 @@ router.post('/register', async (req, res) => {
       text: `Your OTP is ${otp}`
     };
     try {
-      await transporter.sendMail(mailOptions);
+      await sgMail.send({
+        to: email,
+        from: 'hello@rcmjob.com',
+        subject: 'Your OTP for RCM Jobs registration',
+        text: `Your OTP is ${otp}`
+      });
     } catch (emailError) {
       console.error('Email send error:', emailError);
       return res.status(500).json({ error: 'Failed to send OTP email. Please try again.' });
@@ -101,7 +88,12 @@ router.post('/login', async (req, res) => {
           text: `Your OTP is ${newOtp}`
         };
         try {
-          await transporter.sendMail(mailOptions);
+          await sgMail.send({
+            to: email,
+            from: 'hello@rcmjob.com',
+            subject: 'Your OTP for RCM Jobs login',
+            text: `Your OTP is ${newOtp}`
+          });
         } catch (emailError) {
           console.error('Email send error:', emailError);
           return res.status(500).json({ error: 'Failed to send OTP email. Please try again.' });

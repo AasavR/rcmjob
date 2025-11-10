@@ -1,8 +1,8 @@
 const https = require('https');
 
 const postData = JSON.stringify({
-  name: 'Test User42',
-  email: 'test42@example.com',
+  name: 'Test User' + Date.now(),
+  email: 'test' + Date.now() + '@example.com',
   phone: '1234567896',
   password: 'password123',
   role: 'candidate',
