@@ -87,7 +87,10 @@ app.use('/api/otp', otpRoutes);
 app.use(express.static(path.join(__dirname, '../client/build')));
 
 // Catch all handler: send back React's index.html file for any non-API routes
-app.get('/*', (req, res) => {
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
   res.sendFile(path.join(__dirname, '../client/build/index.html'));
 });
 
