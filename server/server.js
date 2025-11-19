@@ -84,15 +84,20 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/otp', otpRoutes);
 
 // Serve static files from the React app build directory
-app.use(express.static(path.join(__dirname, '../client/build')));
+const clientBuildPath = path.join(__dirname, '../client/build');
+if (fs.existsSync(clientBuildPath)) {
+  app.use(express.static(clientBuildPath));
 
-// Catch all handler: send back React's index.html file for any non-API routes
-app.use((req, res, next) => {
-  if (req.path.startsWith('/api')) {
-    return next();
-  }
-  res.sendFile(path.join(__dirname, '../client/build/index.html'));
-});
+  // Catch all handler: send back React's index.html file for any non-API routes
+  app.use((req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+} else {
+  console.warn('⚠️  Client build directory not found. Make sure to build the client before deploying.');
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

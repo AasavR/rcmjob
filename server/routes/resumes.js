@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
+const path = require('path');
 const pdfParse = require('pdf-parse');
 const Resume = require('../models/Resume');
 const User = require('../models/User');
@@ -123,7 +124,7 @@ router.post('/upload', auth, upload.single('resume'), async (req, res) => {
 
     // Update user profile with resume path and RCM vertical scores
     await User.findByIdAndUpdate(req.user.id, {
-      'profile.resume': req.file.path,
+      'profile.resume': req.file.filename, // Store relative filename instead of full path
       rcmVerticalScores: parsedData.rcmVerticals,
       coins: user.coins,
       profileScore: user.profileScore
